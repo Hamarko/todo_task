@@ -1,6 +1,6 @@
 import {createRouter, createWebHashHistory} from "vue-router"
-import todoTaskList from '@/components/todo-task-list'
-import taskItem from '@/components/todo-task-item.vue'
+import todoTaskList from '@/components/todo/todo-task-list'
+import taskItem from '@/components/todo/todo-task-item.vue'
 
 
 const routes = [

@@ -2,22 +2,23 @@
   <div class="todo-task-card">
     <div class="todo-task-car-checkbox" >
       <input 
-        type="checkbox" 
+        type="checkbox"        
         :disabled="isTaskListItem"
         v-model="isChecked"
         >
     </div>
     <div class="todo-task-car-text" v-if="isTaskListItem">      
-      <p class="clip">{{textarea}}</p>
+      <p>{{textarea}}</p>
     </div>    
-    <div class="todo-task-car-text" v-if="!isTaskListItem">      
-      <textarea v-model="textarea" ></textarea>
+    <div class="todo-task-car-textarea" v-if="!isTaskListItem">      
+      <textarea v-model="textarea" placeholder="Enter note"></textarea>
     </div>
     <div class="todo-task-car-button" v-if="!isTaskListItem"> 
-      <button 
-        class="button-delet"        
+      <i 
+        class="material-icons"     
         @click="deleteCard"
-      >Delet</button>
+        id="iconDelet" 
+      >cancel</i> 
     </div>
   </div>
 </template>
@@ -41,7 +42,6 @@ export default {
       set(newText){
         let card = this.card
         card.title = newText
-        console.log(card)
         this.$emit('pachCardInTask',card)
       }
     },
@@ -72,22 +72,30 @@ export default {
     align-self: center;
 
   }
-  .todo-task-car-text{
+  .todo-task-car{
     flex-direction: column;
     width: 70%;
     justify-content: flex-start;
-    p{
-      text-align: left;
+    &-text{
+      width: 90%;
+      p{
+        text-align: left;
+      }
     }
+    &-textarea{
+      width: 80%;
+      textarea {
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }    
   }
   .todo-task-car-button{
     flex-direction: column;
-    width: 20%;
-    
+    align-self: center;
+    width: 10%;    
   }
-  .clip {
-    white-space: nowrap; 
-    overflow: hidden;
-    text-overflow: ellipsis;
+  #iconDelet{
+    color: #f44336
   }
 </style>

@@ -2,7 +2,7 @@ import { createStore } from "vuex"
 import axios from "axios"
 import { v4 as uuidv4 } from "uuid";
 
-const URL = "http://localhost:3000/tasks"
+const BASE_URL = "http://localhost:3000/tasks"
 
 export const store = createStore({
   state:{
@@ -39,6 +39,7 @@ export const store = createStore({
       state.tasks.map(taskItem => {
         if(taskItem === task.id ) taskItem = task
       })
+      state.isNewTask = false
       localStorage.setItem("tasks", JSON.stringify(state.tasks))
     },
     DELET_CARD_IN_STATE(state, taskIdArray, cardId){
@@ -53,18 +54,11 @@ export const store = createStore({
         "status": false
       })
       localStorage.setItem("tasks", JSON.stringify(state.tasks))
-    },
-    UPDATE_CARD_IN_STATE(state, taskIdArray, card){
-      console.log(card)
-      console.log(taskIdArray)
-      state.tasks[taskIdArray].taskCardArray.map( cardItem => {
-        if(cardItem.id === card.id) cardItem = card
-      })
     }
   },
   actions:{
     GET_TASKS({commit}) {
-      return axios.get(URL).then((response) => {
+      return axios.get(BASE_URL).then((response) => {
         commit("SET_TASKS_TO_STATE",response.data)
       }).catch((error) => {
         console.error(`Error on GET_TASKS`);
@@ -72,26 +66,24 @@ export const store = createStore({
       })
     },
     POST_TASK({commit},task) {
-      return axios.post(URL,task).then((response) => {
-        console.log(response.data)
-        commit("UPDATE_TASK_IN_STATE",task)
+      return axios.post(BASE_URL,task).then((response) => { 
+        commit("UPDATE_TASK_IN_STATE",response.data)
       }).catch((error) => {
         console.error(`Error on PUT_TASK`);
         console.error(error);
       })
     },
     PUT_TASK({commit},task){
-      return axios.put(URL+"/"+task.id,task).then((response) => {
-        console.log(response.data)
-        commit("UPDATE_TASK_IN_STATE",task)
+      return axios.put(BASE_URL+"/"+task.id,task).then((response) => {      
+        commit("UPDATE_TASK_IN_STATE",response.data)
       }).catch((error) => {
         console.error(`Error on PUT_TASK`);
         console.error(error);
       })
     },
     DELET_TASK({commit},taskId){
-      return axios.delete(URL+"/"+taskId).then((response) => {
-        console.log(response)
+      return axios.delete(BASE_URL+"/"+taskId).then((response) => {
+        console.log("DELET_TASK respos data ", response.data)
         commit("DELET_TASK_IN_STATE",taskId)
       }).catch((error) => {
         console.error(`Error on DELET_TASK`);

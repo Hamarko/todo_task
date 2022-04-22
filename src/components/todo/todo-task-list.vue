@@ -2,15 +2,21 @@
   <div class="todo-task-list">
     <h1>Task list</h1>
     <button 
-        class="button-edit"     
-        @click="createTask"
-      >Add Task</button>    
-    <taskItem 
-      v-for="task in TASKS"
-      :key="task.id"
-      :id="task.id"
-      :isTaskListItem="true"
-    />
+      class="button-green"     
+      @click="createTask"
+    >Add Task</button>
+    <hr>
+    <div v-if="TASKS.length>0">
+      <taskItem
+        v-for="task in TASKS"
+        :key="task.id"
+        :id="task.id"
+        :isTaskListItem="true"
+      />
+    </div> 
+    <div>
+      <h2>No tasks</h2>
+    </div>   
   </div>
 </template>
 

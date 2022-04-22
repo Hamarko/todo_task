@@ -1,55 +1,52 @@
 <template>
   <div class="popup-wrapper" ref="popup-wrapper">
-    <div class='popup'>
-      <div class="popup-header">
-        <span>{{popupTitle}}</span>        
-      </div>
+    <div class='popup'>      
       <div class="popup-content">
-        <slot></slot>
+        <p>{{popupTitle}}</p>
       </div>
       <div class="popup-footer">
-        <button class="close-modal" @click="closePopup">No</button>
-        <button class="submit-btn"  @click="doAction">Yes</button>
+        <button class="button-red" @click="closePopup">No</button>
+        <button class="button-green"  @click="doAction">Yes</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {mapMutations,mapGetters} from 'vuex'
+import {mapMutations, mapGetters, mapActions} from 'vuex'
 export default {
-  name: "tod-popup",
-  props: {
-    popupTitle: {
-      type: String,
-      default: 'Popup name'
-    },
-    rightBtnTitle: {
-      type: String,
-      default: 'Ok'
-    }
-  },
-  data() {
-    return {}
-  },
+  name: "todo-popup",  
   methods: {
     ...mapMutations(["CLOSED_POPUP"]),
+    ...mapActions(["DELET_TASK","GET_TASKS"]),
     doAction() {
       const action = this.EVENT_POPUP_OBJECT.eventAction
       const data = this.EVENT_POPUP_OBJECT.eventData
       if (action == "delet"){
         if (data.type == "task") this.DELET_TASK(data.taskId)
-        if (data.type == "card") this.DELET_CARD(data.taskId, data.cardId)
+      } 
+      if (action == "back"){
+        this.GET_TASKS()
+        this.$router.push({name: 'mainPage'})
       }
       this.CLOSED_POPUP()
     },
     closePopup() {
-      console.log("Close")
       this.CLOSED_POPUP()
     }
   },
   computed: {
-    ...mapGetters(["EVENT_POPUP_OBJECT"])
+    ...mapGetters(["EVENT_POPUP_OBJECT"]),
+    popupTitle(){
+      if (this.EVENT_POPUP_OBJECT.eventAction == "delet"){
+        return "Are you sure you want to delete this task?"
+      }
+      if (this.EVENT_POPUP_OBJECT.eventAction == "back"){
+        return "Are you sure you want to baeck?"
+      }
+      return ""
+    }
+
   },
   mounted() {
     
@@ -70,14 +67,13 @@ export default {
     bottom: 0;
   }
   .popup {
-    padding: 16px;
+    padding: 30px;
     position: fixed;
-    top: 50px;
+    top: 150px;
     width: 400px;
     background: #ffffff;
     box-shadow: 0 0 17px 0 #e7e7e7;
-    z-index: 10;
-    &-header, &-footer {
+    &-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -86,16 +82,6 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-    }
-    .submit-btn {
-      padding: 8px;
-      color: #ffffff;
-      background: #26ae68;
-    }
-    .close-modal {
-      padding: 8px;
-      color: #ffffff;
-      background: red;
-    }
+    }    
   }
 </style>

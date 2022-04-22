@@ -1,16 +1,25 @@
 <template>
   <div class="todo-task-item">
-    <h2>{{title}}</h2>
-    <button 
-        class="button-edit"  
+    <div class="todo-task-hader">
+      <h2 v-if="isTaskListItem">{{titleTask}}</h2>
+      <input 
+        type="text"
+        placeholder="Enter titel task"
+        v-if="!isTaskListItem"
+        v-model="titleTask"
+      >    
+      <button 
+        class="button-green"  
         v-if="!isTaskListItem"      
         @click="createCard"
       >Add card</button>
+    </div>
     <hr>
     <taskCard
       v-for="card in taskCards"
       :key="card.id"
       :card="card"
+      :idTaskArray="taskIdArray"
       :isTaskListItem="isTaskListItem"
       v-on:pachCardInTask="pachCardInTask"
       v-on:deleteCard="deleteCard"
@@ -18,31 +27,31 @@
     <hr>
     <div class="todo-task-item-footer">
       <button         
-        class="button-edit"
+        class="button-blu"
         v-if="isTaskListItem"
         @click="editTask"   
       >Edit</button>
       <button         
-        class="button-edit"
+        class="button-blu"
         v-if="!isTaskListItem"
         @click="back"   
       >Back</button>
       <button 
-        class="button-edit"
+        class="button-green"
         v-if="!isTaskListItem&&!IS_NEW_TASK"
         @click="updateTask"   
       >Update</button>
       <button 
-        class="button-edit"
+        class="button-green"
         v-if="!isTaskListItem&&IS_NEW_TASK"
         @click="createTask"   
       >Create</button>
       <button 
-        class="button-delet"        
+        class="button-red"        
         @click="deletTask"
       >Delet</button>
       <button         
-        class="button-delet"
+        class="button-blu"
         v-if="!isTaskListItem"
         @click="GET_TASKS"   
       >Cancel</button>
@@ -68,6 +77,7 @@ export default {
   methods:{
     ...mapMutations(["SET_TASKS_TO_STATE","POPUP_EVENT","CREATE_CARD_IN_STATE","DELET_CARD_IN_STATE","UPDATE_CARD_IN_STATE"]),
     ...mapActions(["PUT_TASK", "GET_TASKS", "POST_TASK"]),
+    
     //Task action
     editTask() {
       this.$router.push({
@@ -79,6 +89,7 @@ export default {
     },
     updateTask() {
       this.PUT_TASK(this.TASKS[this.taskIdArray])
+      this.$router.push({name: 'mainPage'})
     },    
     deletTask() {
       const eventPopupObject = {
@@ -91,10 +102,14 @@ export default {
       this.POST_TASK(this.TASKS[this.taskIdArray])
       this.$router.push({name: 'mainPage'})
     },
-    back(){      
-      this.GET_TASKS()
-      this.$router.push({name: 'mainPage'})
+    back(){
+      const eventPopupObject = {
+        eventAction:"back",
+        eventData:{}
+      }
+      this.POPUP_EVENT(eventPopupObject)     
     },
+
     //Card action
     pachCardInTask(card){ 
       const tasks = this.TASKS
@@ -117,7 +132,6 @@ export default {
     },
     taskCards(){
       let taskCards = []
-      console.log(this.TASKS)
       if (this.isTaskListItem && this.TASKS[this.taskIdArray].taskCardArray.length > 2){
         taskCards = this.TASKS[this.taskIdArray].taskCardArray.slice(0, 2)
       }else{
@@ -125,8 +139,15 @@ export default {
       }
       return taskCards
     },
-    title(){
-      return this.TASKS[this.taskIdArray].titleTask
+    titleTask: {
+      get(){
+        return this.TASKS[this.taskIdArray].titleTask
+      },
+      set(newText){
+        const tasks = this.TASKS
+        tasks[this.taskIdArray].titleTask = newText
+        this.SET_TASKS_TO_STATE(tasks)
+      }
     }
   }
 }
@@ -143,6 +164,15 @@ export default {
     display: flex;
     justify-content: space-around;
   }  
+  .todo-task-hader{
+    display: flex;
+    flex-flow: column;
+    input{
+      width: 100%;
+      padding: 5px 0;
+      text-align: center;      
+    }
+  }
   hr{
     margin-left: $padding*-2;
     margin-right: $margin*-2;

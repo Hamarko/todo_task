@@ -10,15 +10,8 @@ npm install
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Run json server for test
 ```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
+json-server --watch db.json
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
